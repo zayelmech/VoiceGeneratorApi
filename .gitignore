@@ -1,4 +1,4 @@
 /.ssh
-/audio
-/venv
+audio/
+venv/
 /__pycache__

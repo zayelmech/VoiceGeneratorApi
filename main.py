@@ -30,7 +30,7 @@ async def download_file() :
 @app.post("/audio/")
 async def get_audio(item : Item) :
     curr_time = round(time.time()*1000) # getting the time in milliseconds
-    file_audio_name = 'audio_file_{}'.format(curr_time)
+    file_audio_name = 'audio_file_{}'.format(curr_time) #creating a file name with current time
     file_audio_path = "audio/{}.flac".format(file_audio_name) # I had to save the file as flac in order to convert it then using ffmpeg
     url = "/static/"+file_audio_name+".mp3"
     try : 
@@ -39,11 +39,16 @@ async def get_audio(item : Item) :
         # engine.setProperty('volume',1.0)
         engine.save_to_file(item.message,file_audio_path )
         engine.runAndWait()
-        convertAudio(file_audio_path, file_audio_name)
     except :
+        print('Could not generate voice ')
         url = nullcontext
 
-    return { "userId" : "{}".format(item.userId), "link":url, "message" : item.message}
+    try :
+        convertAudio(file_audio_path, file_audio_name)
+    except Exception as msg_error:
+        print(f"ERROR:{msg_error}")
+
+    return { "userId" : "{}".format(item.userId), "link": url , "message" : item.message}
 
 # trying to convert from flac to mp3, cuz if I had some issues saving it as mp3
 #so, i am using ffmpeg to make it compatible and you can play
